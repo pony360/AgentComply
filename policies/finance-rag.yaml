@@ -1,0 +1,34 @@
+# AgentComply policy v1alpha1 example: finance RAG assistant
+# 策略 v1alpha1 示例：金融 RAG 助手
+apiVersion: agentcomply.io/v1alpha1
+kind: AgentSecurityPolicy
+metadata:
+  name: finance-rag
+spec:
+  defaultAction: deny
+  selector:
+    agentIds: [finance-agent]
+  rules:
+    - id: read-report
+      effect: allow
+      tool: documents.read
+      operations: [read]
+      resourcePatterns: ["reports/*"]
+      requiredTaskScopes: [report:read]
+    - id: prevent-export
+      effect: deny
+      tool: customer_data.export
+      operations: [export]
+      resourcePatterns: ["**"]
+    - id: approve-bulk-download
+      effect: require_approval
+      tool: documents.bulk_download
+      operations: [read]
+      resourcePatterns: ["reports/**"]
+      requiredTaskScopes: [report:read]
+  detection:
+    mode: enforce
+    sources: [rag_document, tool_response, external_web]
+  audit:
+    enabled: true
+    redactSecrets: true

@@ -1,0 +1,21 @@
+# AgentComply policy example / 策略示例
+# Schema v1: top-level fields are exactly: version, policy_id, default, rules.
+# 第 1 版 Schema：顶层字段只能是 version、policy_id、default、rules。
+version: 1
+policy_id: customer-support-v1
+default: deny
+rules:
+  - id: allow-order-read
+    effect: allow
+    users: [alice]
+    agents: [support-agent]
+    tools: [database.read]
+    resources: [orders]
+    actions: [read]
+  - id: deny-customer-export
+    effect: deny
+    users: [alice]
+    agents: [support-agent]
+    tools: [database.export]
+    resources: [customers]
+    actions: [export]
